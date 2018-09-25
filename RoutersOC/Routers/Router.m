@@ -16,7 +16,6 @@
 
 @implementation Router
 
-
 //      profile://root@ViewController?key=value
 + (NSError *)router2:(NSURL *)uri params:(NSDictionary *)params {
     NSError *error = nil;
@@ -32,20 +31,62 @@
     
     /**
      * profile://(alert:// or do://)root(cur代表当前显示的profile)@className/initMethod,?p=v&p=v#code(xib/sb)
+     scheme://user@host/path?parameterString#fragment
+     scheme: 判断页面跳转||alert弹出
+     user: 判定跳转时cur控制器跳转还是root控制器跳转
+     host: 跳转页面名称
+     path: __initWith
+     parameterString: 传参
+     fragment: 页面生成方式 code/sb/xib
+     //详见appleDeveloper官方文档
+     https://developer.apple.com/documentation/foundation/nsurl?language=objc
      */
     
     
     NSString *scheme = [uri scheme];
+    NSString *createType = [uri fragment];
     
     if ([scheme isEqualToString: @"profile"]) {
+        //页面跳转
+        
+        if ([createType isEqualToString: @"code"]) {
+            NSString *clsString = [uri host];
+            
+            //从uri中提取query拼接
+            NSDictionary *queryParams = [self getQueryParamsFromUrl: uri];
+            //判断如果uri中如果已经存在传参，则拼接
+            if (queryParams.allKeys.count > 0) {
+                [passParams addEntriesFromDictionary: queryParams];
+            }
+            
+            //查找cls中的init方法
+            NSString *initMethod = [uri path];
+            
+            NSString *regString = @"^(__initWith).*$";
+            NSPredicate *predicate = [NSPredicate predicateWithFormat: @"SELF MATCH %@", regString];
+            
+            
+            
+            
+            
+        } else if ([createType isEqualToString: @"xib"]) {
+            
+        } else {
+            // createType == sb
+        }
+        
+     
+        
         
         
         
         
         
     } else if ([scheme isEqualToString: @"alert"]) {
+        //alert 弹出
         
     } else {
+        // else
         
     }
     
@@ -117,6 +158,18 @@
 
 + (UIViewController *)notFoundViewController {
     return [[NotFoundViewController alloc] init];
+}
+
++ (NSDictionary *)getQueryParamsFromUrl:(NSURL *)url {
+    NSString *query = [url query];
+    NSArray *querys = [query componentsSeparatedByString: @"&"];
+    NSMutableDictionary *queryParams = [NSMutableDictionary dictionaryWithCapacity: 0];
+    for (NSString *query in querys) {
+        NSString *key = [query componentsSeparatedByString: @"="].firstObject;
+        NSString *value = [query componentsSeparatedByString: @"="].lastObject;
+        [queryParams setObject: value forKey: key];
+    }
+    return queryParams;
 }
 
 @end
