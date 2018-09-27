@@ -45,12 +45,12 @@
     
     NSString *scheme = [uri scheme];
     NSString *createType = [uri fragment];
+    NSString *clsString = [uri host];
     
     if ([scheme isEqualToString: @"profile"]) {
         //页面跳转
-        
         if ([createType isEqualToString: @"code"]) {
-            NSString *clsString = [uri host];
+            //代码生成方式
             
             //从uri中提取query拼接
             NSDictionary *queryParams = [self getQueryParamsFromUrl: uri];
@@ -59,12 +59,32 @@
                 [passParams addEntriesFromDictionary: queryParams];
             }
             
-            //查找cls中的init方法
+            //判断在uri中是否包含^(__initWith).*$方法
+            //若有，则直接调用方法生成cls
+            //若无，则使用runtime查找cls中所有方法，__initWith生成cls，反之error
             NSString *initMethod = [uri path];
-            
             NSString *regString = @"^(__initWith).*$";
             NSPredicate *predicate = [NSPredicate predicateWithFormat: @"SELF MATCH %@", regString];
             
+            if (![predicate evaluateWithObject: initMethod]) {
+                //若uri中path未包含init方法，则查找
+                if (passParams.count == 0) {
+                    //若未传参，则直接调用init方法生成
+                    initMethod = @"init";
+                } else {
+                    Class cls = NSClassFromString(clsString);
+                    if (cls) {
+                        
+                        
+                        
+                    } else {
+                        error = [NSError errorWithDomain: @"route host or path error" code: ROUTER_URI_ERROR userInfo: nil];
+                    }
+                    
+                }
+                
+                
+            }
             
             
             
