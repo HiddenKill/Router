@@ -77,13 +77,12 @@
                         
                         
                         
+                        
+                        
                     } else {
                         error = [NSError errorWithDomain: @"route host or path error" code: ROUTER_URI_ERROR userInfo: nil];
                     }
-                    
                 }
-                
-                
             }
             
             

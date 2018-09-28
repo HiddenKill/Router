@@ -7,6 +7,8 @@
 //
 
 #import "SecondViewController.h"
+#import <objc/runtime.h>
+
 
 @interface SecondViewController ()
 
@@ -19,7 +21,25 @@
     
     
     self.view.backgroundColor = [UIColor blueColor];
+    
+    unsigned int outCount = 0;
+    Method *method_f = class_copyMethodList(self.class, &outCount);
+    for (int i = 0; i < outCount; i++) {
+        Method method = method_f[i];
+    }
+}
 
+
+- (void)method1 {
+    
+}
+
+- (void)method2 {
+    
+}
+
+- (void)method3 {
+    
 }
 
 - (void)didReceiveMemoryWarning {
